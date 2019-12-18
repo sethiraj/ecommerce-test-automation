@@ -8,6 +8,7 @@ import org.openqa.selenium.By;
 import com.framework.elementproviders.HomePageElementProvider;
 import com.taf.core.TestContext;
 import com.taf.core.TestPage;
+import com.taf.impl.selenide.SelenideTestContext;
 import com.taf.impl.selenium.SeleniumTestContext;
 
 /**
@@ -18,7 +19,7 @@ import com.taf.impl.selenium.SeleniumTestContext;
 public class HomePage extends TestPage {
 
 	/** The selenium test context. */
-	private final SeleniumTestContext seleniumTestContext;
+	private final TestContext testContext;
 
 	/** The sign up page element provider. */
 	private HomePageElementProvider homePageElementProvider;
@@ -31,7 +32,11 @@ public class HomePage extends TestPage {
 	 */
 	public HomePage(final TestContext context) {
 		super(context);
-		seleniumTestContext = (SeleniumTestContext) context;
+		if (context.getClass().getSimpleName().contains("SeleniumTestContext")) {
+			testContext = (SeleniumTestContext) context;
+		} else {
+			testContext = (SelenideTestContext) context;
+		}
 	}
 
 	/*
@@ -41,7 +46,7 @@ public class HomePage extends TestPage {
 	 */
 	@Override
 	public void intializeElementProvider() {
-		homePageElementProvider = new HomePageElementProvider(seleniumTestContext);
+		homePageElementProvider = new HomePageElementProvider(testContext);
 	}
 
 	/**
@@ -57,8 +62,8 @@ public class HomePage extends TestPage {
 	 * Click admin priviledges.
 	 */
 	public void clickAdminPriviledges() {
-		seleniumTestContext.click(homePageElementProvider.getAdminLink());
-		seleniumTestContext.waitForElementToBeClickable(By.xpath("View Products"));
-		seleniumTestContext.click(homePageElementProvider.getLogOut());
+		testContext.click(homePageElementProvider.getAdminLink());
+		testContext.waitForElementToBeClickable(By.xpath("View Products"));
+		testContext.click(homePageElementProvider.getLogOut());
 	}
 }

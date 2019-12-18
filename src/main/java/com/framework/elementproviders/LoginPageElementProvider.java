@@ -2,6 +2,9 @@ package com.framework.elementproviders;
 
 import com.taf.core.PageElementProvider;
 import com.taf.core.TestContext;
+import com.taf.core.ToolElementProvider;
+import com.taf.impl.selenide.SelenideElementProvider;
+import com.taf.impl.selenide.SelenideTestContext;
 import com.taf.impl.selenium.SeleniumElementProvider;
 import com.taf.impl.selenium.SeleniumTestContext;
 import org.openqa.selenium.By;
@@ -12,10 +15,10 @@ import org.openqa.selenium.By;
 public class LoginPageElementProvider extends PageElementProvider {
 
 	/** The selenium test context. */
-	protected SeleniumTestContext seleniumTestContext;
+	protected TestContext testContext;
 
 	/** The selenium element provider. */
-	protected SeleniumElementProvider seleniumElementProvider;
+	protected ToolElementProvider toolElementProvider;
 
 	/**
 	 * Instantiates a new base element provider.
@@ -25,8 +28,13 @@ public class LoginPageElementProvider extends PageElementProvider {
 	 */
 	public LoginPageElementProvider(final TestContext context) {
 		super(context);
-		seleniumTestContext = (SeleniumTestContext) context;
-		seleniumElementProvider = new SeleniumElementProvider(seleniumTestContext);
+		if (context.getClass().getSimpleName().contains("SeleniumTestContext")) {
+			testContext = (SeleniumTestContext) context;
+			toolElementProvider = new SeleniumElementProvider(testContext);
+		} else {
+			testContext = (SelenideTestContext) context;
+			toolElementProvider = new SelenideElementProvider(testContext);
+		}
 	}
 
 	/**
@@ -35,8 +43,8 @@ public class LoginPageElementProvider extends PageElementProvider {
 	 * @return the submit
 	 */
 	public Object getSubmit() {
-		seleniumTestContext.waitForElementToDisplayUsingBy(By.xpath("//button[@type='submit']"));
-		return seleniumElementProvider.getElementByXpath("//button[@type='submit']");
+		testContext.waitForElementToDisplayUsingBy(By.xpath("//button[@type='submit']"));
+		return toolElementProvider.getElementByXpath("//button[@type='submit']");
 	}
 
 	/**
@@ -45,8 +53,8 @@ public class LoginPageElementProvider extends PageElementProvider {
 	 * @return the user name
 	 */
 	public Object getUserName() {
-		seleniumTestContext.waitForElementToDisplayUsingBy(By.name("username"));
-		return seleniumElementProvider.getElementByName("username");
+		testContext.waitForElementToDisplayUsingBy(By.name("username"));
+		return toolElementProvider.getElementByName("username");
 	}
 
 	/**
@@ -55,8 +63,8 @@ public class LoginPageElementProvider extends PageElementProvider {
 	 * @return the password
 	 */
 	public Object getPassword() {
-		seleniumTestContext.waitForElementToDisplayUsingBy(By.name("password"));
-		return seleniumElementProvider.getElementByName("password");
+		testContext.waitForElementToDisplayUsingBy(By.name("password"));
+		return toolElementProvider.getElementByName("password");
 	}
 
 	/**
@@ -65,7 +73,7 @@ public class LoginPageElementProvider extends PageElementProvider {
 	 * @return the log out
 	 */
 	public Object getLogOut() {
-		seleniumTestContext.waitForElementToDisplayUsingBy(By.xpath("//button[contains(.,'Log Out')]"));
-		return seleniumElementProvider.getElementByXpath("//button[contains(.,'Log Out')]");
+		testContext.waitForElementToDisplayUsingBy(By.xpath("//button[contains(.,'Log Out')]"));
+		return toolElementProvider.getElementByXpath("//button[contains(.,'Log Out')]");
 	}
 }
